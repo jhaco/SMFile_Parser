@@ -77,10 +77,12 @@ def parse_sm(n):                                                                
 
 #=================================================================================================
 
-def output_file(n,x):                                                                                 #outputs to .txt
-    n = n.split('.')[0] + '.txt'
-
-    with open(n, "w") as f:
+def output_file(n,x):                                                                               #outputs to .txt
+    space = '_'                                                                                     #formatting
+    n = space.join(n.split()).lower() + '.txt'
+    d = "".join(e for e in n if e not in '()[]')
+    
+    with open(d, "w") as f:
         f.write("TITLE " + str(x.title) + "\n")
         f.write("BPM   " + str(x.BPM) + "\n")
         f.write("NOTES\n")
