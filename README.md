@@ -10,4 +10,6 @@ Then either displays data or writes to a .txt output file when prompted.
 
 Does not support 3/4th measures.
 
+Only reads the first difficulty listed.
+
 Ignores non-ASCII characters (ex: Japanese text)
