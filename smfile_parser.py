@@ -78,8 +78,7 @@ def parse_sm(n):                                                                
 #=================================================================================================
 
 def output_file(n,x):                                                                               #outputs to .txt
-    space = '_'                                                                                     #formatting
-    n = space.join(n.split()).lower() + '.txt'
+    n = '_'.join(n.split()).lower() + '.txt'
     d = "".join(e for e in n if e not in '()[]')
     
     with open(d, "w") as f:
