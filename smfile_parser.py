@@ -77,12 +77,8 @@ def parse_sm(n):                                                                
 
 #=================================================================================================
 
-def output_file(x):                                                                                 #outputs to .txt
-    while True:                                                                                     #beware of foreign characters (ex. Japanese)
-        n = input("Enter a .txt file: ")
-        if n.endswith('.txt'):
-            break
-        print("Invalid.")
+def output_file(n,x):                                                                                 #outputs to .txt
+    n = n.split('.')[0] + '.txt'
 
     with open(n, "w") as f:
         f.write("TITLE " + str(x.title) + "\n")
@@ -110,4 +106,4 @@ if(e=="1"):
     print("Notes:\n"  + str(x.notes) + "\n")
 
 if(e=="2"):
-    output_file(x)
+    output_file(n,x)
