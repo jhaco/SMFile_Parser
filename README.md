@@ -1,5 +1,5 @@
-# SMFile_Parser
-Stepmania File Parser
+## SMFile_Parser
+#Stepmania File Parser
 
 Accepts .sm input files and parses for:
 - Title
