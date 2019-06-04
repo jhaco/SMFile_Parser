@@ -9,7 +9,7 @@ class Step:
 #=================================================================================================
 
 def get_file_names(mypath):
-    return[f for f in listdir(mypath) if isfile(join(mypath, f))]
+    return [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 
 #BPM = beats/minute -> BPS = beats/second = BPM/60
@@ -30,14 +30,6 @@ def get_timing(measure, m_i, bpm):                                              
     return time
 
 #=================================================================================================
-
-def get_file():                                                                                     #input name of file
-    while True:                                                                                     #beware of foreign characters (ex. Japanese)
-        n = input("Enter a .sm file: ")
-        if n.endswith('.sm'):
-            break
-        print("Failed to open file.")
-    return n
 
 def parse_sm(n):                                                                                    #parse .sm for BPM and measure + notes
     x       = Step()                                                                                #Step class x
@@ -101,25 +93,8 @@ def output_file(n,x):                                                           
 #MAIN
 for f in get_file_names("./"):
     if f.endswith(".sm"):
-        #n = get_file()
         try:
             x = parse_sm(f)
-
-        #print("\nOptions")
-        #print("1...print info")
-        #print("2...write to file")
-        #print("3...quit")
-        #e = input("Select option: ")
-
-        #if(e=="1"):
-            #print("\nTitle: " + str(x.title))
-            #print("BPM:   "   + str(x.BPM))
-            #print("Notes:\n"  + str(x.notes) + "\n")
-
-        #if(e=="2"):
             output_file(f,x)
         except Exception:
             pass
-
-        #if(e=="3"):
-            #break
