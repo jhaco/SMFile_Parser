@@ -102,7 +102,8 @@ def output_file(n,x):                                                           
 for f in get_file_names("./"):
     if f.endswith(".sm"):
         #n = get_file()
-        x = parse_sm(f)
+        try:
+            x = parse_sm(f)
 
         #print("\nOptions")
         #print("1...print info")
@@ -116,7 +117,9 @@ for f in get_file_names("./"):
             #print("Notes:\n"  + str(x.notes) + "\n")
 
         #if(e=="2"):
-        output_file(f,x)
+            output_file(f,x)
+        except Exception:
+            pass
 
         #if(e=="3"):
             #break
