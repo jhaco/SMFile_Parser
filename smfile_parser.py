@@ -1,5 +1,3 @@
-import os
-
 class Step:
     title   = "empty"
     BPM     = 0.0
