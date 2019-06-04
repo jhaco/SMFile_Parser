@@ -1,9 +1,16 @@
+from os import listdir
+from os.path import isfile, join
+
 class Step:
     title   = "empty"
     BPM     = 0.0
     notes   = []
 
 #=================================================================================================
+
+def get_file_names(mypath):
+    return[f for f in listdir(mypath) if isfile(join(mypath, f))]
+
 
 #BPM = beats/minute -> BPS = beats/second = BPM/60
 #measure = 4 beats = 4 1/4th notes = 1
@@ -88,27 +95,28 @@ def output_file(n,x):                                                           
         for i in x.notes:
             f.write(str(i) + "\n")
 
-    print("\nWrite successful.")
+    print("Write successful.")
 
 #=================================================================================================
 #MAIN
-while True:
-    n = get_file()
-    x = parse_sm(n)
+for f in get_file_names("./"):
+    if f.endswith(".sm"):
+        #n = get_file()
+        x = parse_sm(f)
 
-    print("\nOptions")
-    print("1...print info")
-    print("2...write to file")
-    print("3...quit")
-    e = input("Select option: ")
+        #print("\nOptions")
+        #print("1...print info")
+        #print("2...write to file")
+        #print("3...quit")
+        #e = input("Select option: ")
 
-    if(e=="1"):
-        print("\nTitle: " + str(x.title))
-        print("BPM:   "   + str(x.BPM))
-        print("Notes:\n"  + str(x.notes) + "\n")
+        #if(e=="1"):
+            #print("\nTitle: " + str(x.title))
+            #print("BPM:   "   + str(x.BPM))
+            #print("Notes:\n"  + str(x.notes) + "\n")
 
-    if(e=="2"):
-        output_file(n,x)
+        #if(e=="2"):
+        output_file(f,x)
 
-    if(e=="3"):
-        break
+        #if(e=="3"):
+            #break
