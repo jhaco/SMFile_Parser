@@ -1,14 +1,14 @@
 from os import listdir
 from os.path import isfile, join
 
-class Step:
+class Step():
     title   = "empty"
     BPM     = 0.0
     notes   = []
 
 #=================================================================================================
 
-def get_file_names(mypath):
+def get_file_names(mypath):                                                                         #lists all files in specified directory
     return [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 
@@ -96,5 +96,6 @@ for f in get_file_names("./"):
         try:
             x = parse_sm(f)
             output_file(f,x)
+            x.notes.clear()
         except Exception:
             pass
