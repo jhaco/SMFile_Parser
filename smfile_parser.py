@@ -1,3 +1,5 @@
+import os
+
 class Step:
     title   = "empty"
     BPM     = 0.0
@@ -79,8 +81,8 @@ def parse_sm(n):                                                                
 
 def output_file(n,x):                                                                               #outputs to .txt
     n = '_'.join(n.split()).split('.')[0].lower() + '.txt'
-    d = "".join(e for e in n if e not in '()[]')
-    
+    d = "".join(e for e in n if e not in '()[]@!?#$%^&*')
+
     with open(d, "w") as f:
         f.write("TITLE " + str(x.title) + "\n")
         f.write("BPM   " + str(x.BPM) + "\n")
@@ -92,19 +94,23 @@ def output_file(n,x):                                                           
 
 #=================================================================================================
 #MAIN
+while True:
+    n = get_file()
+    x = parse_sm(n)
 
-n = get_file()
-x = parse_sm(n)
+    print("\nOptions")
+    print("1...print info")
+    print("2...write to file")
+    print("3...quit")
+    e = input("Select option: ")
 
-print("\nOptions")
-print("1...print info")
-print("2...write to file")
-e = input("Select option: ")
+    if(e=="1"):
+        print("\nTitle: " + str(x.title))
+        print("BPM:   "   + str(x.BPM))
+        print("Notes:\n"  + str(x.notes) + "\n")
 
-if(e=="1"):
-    print("\nTitle: " + str(x.title))
-    print("BPM:   "   + str(x.BPM))
-    print("Notes:\n"  + str(x.notes) + "\n")
+    if(e=="2"):
+        output_file(n,x)
 
-if(e=="2"):
-    output_file(n,x)
+    if(e=="3"):
+        break
