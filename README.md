@@ -16,6 +16,6 @@ Only reads the first difficulty listed.
 changelog:
 - fixed a bug where the parser skipped the last measure
 - added note placement for each note timing as a binary to decimal function
-- fixed a bug where the Step lists were not cleared after each file, resulting in large output files
+- fixed a bug where the Step lists were not cleared after each file, resulting in abnormally large output files
 - converted to a no-input, batch processing method
 - ignores non-ASCII (ex. Japanese) text in the title
