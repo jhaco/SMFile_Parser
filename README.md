@@ -19,4 +19,5 @@ changelog:
 - added note placement for each note timing as a binary to decimal function
 - fixed a bug where the Step lists were not cleared after each file, resulting in abnormally large output files
 - converted to a no-input, batch processing method
+- added formatting to output file names
 - ignores non-ASCII (ex. Japanese) text in the title
