@@ -23,6 +23,7 @@ changelog:
 - replaced holds with normal note for note placement
 - added note placement for each note timing as a binary to decimal function, ignores mines
 - fixed a bug where the Step lists were not cleared after each file, resulting in abnormally large and incorrect output files
+- added exception handling to continue to the next file if the current one throws an error
 - converted to a no-input, batch processing method for .sm files found within the directory
 - added formatting to output .txt file names
 - ignores non-ASCII (ex. Japanese) text in the title
