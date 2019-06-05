@@ -5,8 +5,7 @@ Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 - Title
 - BPM
 - Note Timings (in seconds)
-
-~~Then either displays data or writes to a .txt output file when prompted.~~
+- Note Placements (ex. 0001 = 01)
 
 Then writes data to their respective .txt output files for valid .sm files.
 
@@ -14,4 +13,9 @@ Does not support 3/4th measures.
 
 Only reads the first difficulty listed.
 
-Ignores non-ASCII characters (ex: Japanese text)
+changelog:
+- fixed a bug where the parser skipped the last measure
+- added note placement for each note timing as a binary to decimal function
+- fixed a bug where the Step lists were not cleared after each file, resulting in large output files
+- converted to a no-input, batch processing method
+- ignores non-ASCII (ex. Japanese) text in the title
