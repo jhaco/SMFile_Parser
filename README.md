@@ -18,6 +18,7 @@ changelog:
 - added formatting to .ogg files found within the directory
 - added example hard_humming sm, txt and ogg files
 - fixed a bug where the parser skipped the last measure
+- replaced holds with normal note for note placement
 - added note placement for each note timing as a binary to decimal function, ignores mines
 - fixed a bug where the Step lists were not cleared after each file, resulting in abnormally large output files
 - converted to a no-input, batch processing method
