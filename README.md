@@ -9,6 +9,8 @@ Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 
 Then writes data to their respective .txt output files for valid .sm files.
 
+Only supports files with static BPM for the purpose of training the note generator program.
+
 Does not support 3/4th measures.
 
 Only reads the first difficulty listed.
@@ -24,3 +26,6 @@ changelog:
 - converted to a no-input, batch processing method for .sm files found within the directory
 - added formatting to output .txt file names
 - ignores non-ASCII (ex. Japanese) text in the title
+
+issues:
+- some .sm files that should work does not, throwing a divide by zero exception
