@@ -5,6 +5,7 @@ class Step():
     title   = "empty"
     BPM     = 0.0
     notes   = []
+    types   = []
 
 #=================================================================================================
 
@@ -29,6 +30,10 @@ def get_timing(measure, m_i, bpm):                                              
 
     return time
 
+def convert_note(line):
+    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1")
+    return x
+
 #=================================================================================================
 
 def parse_sm(n):                                                                                    #parse .sm for BPM and measure + notes
@@ -37,6 +42,24 @@ def parse_sm(n):                                                                
     measure = []
     chars   = set('123456789')                                                                      #set of digits, not including 0
     flag    = False
+    bide    = {
+        "0001": "01",
+        "0010": "02",
+        "0011": "03",
+        "0100": "04",
+        "0101": "05",
+        "0110": "06",
+        "0111": "07",
+        "1000": "08",
+        "1001": "09",
+        "1010": "10",
+        "1011": "11",
+        "1100": "12",
+        "1101": "13",
+        "1110": "14",
+        "1111": "15"
+    }
+
 
     with open(n, 'r', encoding='ascii', errors='ignore') as f:                                      #ignores non-ASCII text (ex. Japanese)      
         for line in f:                                                                              #reads by line
@@ -57,12 +80,13 @@ def parse_sm(n):                                                                
                     check = False
                     if any((c in chars) for c in line):                                             #if line in measure has notes
                         check = True
-                    if check:
-                        measure.append(1)                                                            
+                    if check:                        
+                        measure.append(1)
+                        x.types.append(bide[convert_note(line.rstrip('\n'))])                                                            
                     else:                                                                           #if line in measure has no notes
                         measure.append(0) 
 
-            if line.startswith(','):
+            if line.startswith(',') or line.startswith(';'):
                 time = get_timing(measure, m_i, x.BPM)
                 x.notes.extend(time)                                                                #adds list of timestamps to x.notes
                 measure.clear()
@@ -84,8 +108,8 @@ def output_file(n,x):                                                           
         f.write("TITLE " + str(x.title) + "\n")
         f.write("BPM   " + str(x.BPM) + "\n")
         f.write("NOTES\n")
-        for i in x.notes:
-            f.write(str(i) + "\n")
+        for i in range(len(x.notes)):
+            f.write(str(x.types[i]) + " " + str(x.notes[i]) + "\n")
 
     print("Write successful.")
 
@@ -97,5 +121,6 @@ for f in get_file_names("./"):
             x = parse_sm(f)
             output_file(f,x)
             x.notes.clear()
+            x.types.clear()
         except Exception:
             pass
