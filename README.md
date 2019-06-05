@@ -14,6 +14,7 @@ Does not support 3/4th measures.
 Only reads the first difficulty listed.
 
 changelog:
+- cleaned up code for readability
 - added formatting to .ogg files found within the directory
 - added example hard_humming sm, txt and ogg files
 - fixed a bug where the parser skipped the last measure
