@@ -14,6 +14,7 @@ Does not support 3/4th measures.
 Only reads the first difficulty listed.
 
 changelog:
+- created a simple test.sm and its respective test.txt file
 - fixed a bug where the parser skipped the last measure
 - added note placement for each note timing as a binary to decimal function
 - fixed a bug where the Step lists were not cleared after each file, resulting in abnormally large output files
