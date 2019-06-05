@@ -7,11 +7,20 @@ class Step():
     notes   = []
     types   = []
 
-#=================================================================================================
-
 def get_file_names(mypath):                                                                         #lists all files in specified directory
     return [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
+#=================================================================================================
+
+def convert_note(line):
+    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1")
+    return x
+
+def format(src):
+    dst = '_'.join(src.split()).split('.')[0].lower()
+    return "".join(e for e in dst if e not in '()[]@!?#$%^&*')
+
+#=================================================================================================
 
 #BPM = beats/minute -> BPS = beats/second = BPM/60
 #measure = 4 beats = 4 1/4th notes = 1
@@ -30,10 +39,6 @@ def get_timing(measure, m_i, bpm):                                              
 
     return time
 
-def convert_note(line):
-    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1")
-    return x
-
 #=================================================================================================
 
 def parse_sm(n):                                                                                    #parse .sm for BPM and measure + notes
@@ -43,21 +48,14 @@ def parse_sm(n):                                                                
     chars   = set('123456789')                                                                      #set of digits, not including 0
     flag    = False
     bide    = {
-        "0001": "01",
-        "0010": "02",
-        "0011": "03",
-        "0100": "04",
-        "0101": "05",
-        "0110": "06",
-        "0111": "07",
-        "1000": "08",
-        "1001": "09",
-        "1010": "10",
-        "1011": "11",
-        "1100": "12",
-        "1101": "13",
-        "1110": "14",
-        "1111": "15"
+        "0001": "01", "1001": "09",
+        "0010": "02", "1010": "10",
+        "0011": "03", "1011": "11",
+        "0100": "04", "1100": "12",
+        "0101": "05", "1101": "13",
+        "0110": "06", "1110": "14",
+        "0111": "07", "1111": "15",
+        "1000": "08"
     }
 
 
@@ -101,8 +99,7 @@ def parse_sm(n):                                                                
 #=================================================================================================
 
 def output_file(n,x):                                                                               #outputs to .txt
-    n = '_'.join(n.split()).split('.')[0].lower() + '.txt'
-    d = "".join(e for e in n if e not in '()[]@!?#$%^&*')
+    d = format(n) + '.txt'
 
     with open(d, "w") as f:
         f.write("TITLE " + str(x.title) + "\n")
@@ -111,7 +108,7 @@ def output_file(n,x):                                                           
         for i in range(len(x.notes)):
             f.write(str(x.types[i]) + " " + str(x.notes[i]) + "\n")
 
-    print("Write successful.")
+    print("Write successful: " + d)
 
 #=================================================================================================
 #MAIN
@@ -126,8 +123,7 @@ for f in get_file_names("./"):
             pass
     if f.endswith(".ogg"):
         try:
-            n = '_'.join(f.split()).split('.')[0].lower() + '.ogg'
-            dst = "".join(e for e in n if e not in '()[]@!?#$%^&*')
-            rename(f, dst)
+            n = format(f) + '.ogg'
+            rename(f, n)
         except Exception:
             pass
