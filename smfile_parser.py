@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, rename
 from os.path import isfile, join
 
 class Step():
@@ -122,5 +122,12 @@ for f in get_file_names("./"):
             output_file(f,x)
             x.notes.clear()
             x.types.clear()
+        except Exception:
+            pass
+    if f.endswith(".ogg"):
+        try:
+            n = '_'.join(f.split()).split('.')[0].lower() + '.ogg'
+            dst = "".join(e for e in n if e not in '()[]@!?#$%^&*')
+            rename(f, dst)
         except Exception:
             pass
