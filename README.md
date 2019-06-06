@@ -16,7 +16,7 @@ Does not support 3/4th measures.
 Only reads the first difficulty listed.
 
 changelog:
-- fixed a bug where the Step.note and Step.types were not cleared if an error occured in the middle of parsing a previous file
+- fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
 - cleaned up code for readability
 - added formatting to .ogg files found within the directory
 - added example hard_humming sm, txt and ogg files
