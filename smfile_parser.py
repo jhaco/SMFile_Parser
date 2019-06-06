@@ -13,7 +13,7 @@ def get_file_names(mypath):                                                     
 #=================================================================================================
 
 def convert_note(line):
-    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1")
+    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1").replace("K", "0").replace("L", "0").replace("F", "0")
     return x
 
 def format(src):
@@ -48,16 +48,12 @@ def parse_sm(n):                                                                
     chars   = set('123456789')                                                                      #set of digits, not including 0
     flag    = False
     bide    = {
-        "0001": "01", "1001": "09",
-        "0010": "02", "1010": "10",
-        "0011": "03", "1011": "11",
-        "0100": "04", "1100": "12",
-        "0101": "05", "1101": "13",
-        "0110": "06", "1110": "14",
-        "0111": "07", "1111": "15",
-        "1000": "08"
+        "0001": "01", "0110": "06", "1011": "11",
+        "0010": "02", "0111": "07", "1100": "12",
+        "0011": "03", "1000": "08", "1101": "13",
+        "0100": "04", "1001": "09", "1110": "14",
+        "0101": "05", "1010": "10", "1111": "15"
     }
-
 
     with open(n, 'r', encoding='ascii', errors='ignore') as f:                                      #ignores non-ASCII text (ex. Japanese)      
         for line in f:                                                                              #reads by line
@@ -117,10 +113,10 @@ for f in get_file_names("./"):
         try:
             x = parse_sm(f)
             output_file(f,x)
-            x.notes.clear()
-            x.types.clear()
         except Exception:
             pass
+        x.notes.clear()
+        x.types.clear()
     if f.endswith(".ogg"):
         try:
             n = format(f) + '.ogg'
