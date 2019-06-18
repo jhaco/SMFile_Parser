@@ -1,5 +1,5 @@
 ## SMFile_Parser
-Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96
+Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0
 
 Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 - Title
@@ -17,6 +17,7 @@ Only reads the first difficulty listed.
 
 changelog:
 - added an error message to print the offending file name
+- included holds (2) and rolls (3)
 - changed from binary/decimal note notation to copying the numeric combination for each valid note from the .sm file
 - fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
 - cleaned up code for readability
