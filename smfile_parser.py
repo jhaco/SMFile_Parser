@@ -13,12 +13,12 @@ def get_file_names(mypath):                                                     
 #=================================================================================================
 
 def convert_note(line):
-    x = line.replace("M", "0").replace("2", "1").replace("3", "1").replace("4", "1").replace("K", "0").replace("L", "0").replace("F", "0")
+    x = line.replace("M", "0").replace("4", "1").replace("K", "0").replace("L", "0").replace("F", "0")
     return x
 
 def format(src):
     dst = '_'.join(src.split()).split('.')[0].lower()
-    return "".join(e for e in dst if e not in '()[]@!?#$%^&*')
+    return "".join(e for e in dst if e not in '()[]@!?#$%^&*\',')
 
 #=================================================================================================
 
@@ -47,13 +47,6 @@ def parse_sm(n):                                                                
     measure = []
     chars   = set('123456789')                                                                      #set of digits, not including 0
     flag    = False
-    bide    = {
-        "0001": "01", "0110": "06", "1011": "11",
-        "0010": "02", "0111": "07", "1100": "12",
-        "0011": "03", "1000": "08", "1101": "13",
-        "0100": "04", "1001": "09", "1110": "14",
-        "0101": "05", "1010": "10", "1111": "15"
-    }
 
     with open(n, 'r', encoding='ascii', errors='ignore') as f:                                      #ignores non-ASCII text (ex. Japanese)      
         for line in f:                                                                              #reads by line
@@ -76,7 +69,7 @@ def parse_sm(n):                                                                
                         check = True
                     if check:                        
                         measure.append(1)
-                        x.types.append(bide[convert_note(line.rstrip('\n'))])                                                            
+                        x.types.append(convert_note(line.rstrip('\n')))                                                            
                     else:                                                                           #if line in measure has no notes
                         measure.append(0) 
 
@@ -104,7 +97,7 @@ def output_file(n,x):                                                           
         for i in range(len(x.notes)):
             f.write(str(x.types[i]) + " " + str(x.notes[i]) + "\n")
 
-    print("Write successful: " + d)
+    #print("Write successful: " + d)
 
 #=================================================================================================
 #MAIN
@@ -114,6 +107,7 @@ for f in get_file_names("./"):
             x = parse_sm(f)
             output_file(f,x)
         except Exception:
+            print("Write failed: " + f)
             pass
         x.notes.clear()
         x.types.clear()
