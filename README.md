@@ -17,12 +17,12 @@ Only reads the first difficulty listed.
 
 changelog:
 - added an error message to print the offending file name
-- included holds (2) and rolls (3)
+- included hold (2) and roll (3) note types
 - changed from binary/decimal note notation to copying the numeric combination for each valid note from the .sm file
 - fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
 - cleaned up code for readability
 - added formatting to .ogg files found within the directory
-- added example hard_humming sm, txt and ogg files
+- added example vanessa sm, txt and ogg files
 - fixed a bug where the parser skipped the last measure
 - replaced holds with normal note for note placement
 - added note placement for each note timing as a binary to decimal function, ignores mines
