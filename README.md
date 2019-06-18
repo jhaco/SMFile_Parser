@@ -31,5 +31,8 @@ Only reads the first difficulty listed.
 - added formatting to output .txt file names
 - ignores non-ASCII (ex. Japanese) text in the title
 
+#### plans:
+- be able to convert the resultant .txt file back to a usable .sm file
+
 #### issues:
 - some .sm files that should work does not, throwing a divide by zero exception
