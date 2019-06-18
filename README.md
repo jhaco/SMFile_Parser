@@ -5,7 +5,7 @@ Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 - Title
 - BPM
 - Note Timings (in seconds)
-- Note Placements (ex. 0001 = 01)
+- Note Placements (ex. 0001, 0201, etc)
 
 Then writes data to their respective .txt output files for valid .sm files.
 
