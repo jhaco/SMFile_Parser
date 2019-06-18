@@ -16,7 +16,7 @@ Does not support 3/4th measures.
 Only reads the first difficulty listed.
 
 changelog:
-- added an error message to print the offending file
+- added an error message to print the offending file name
 - changed from binary/decimal note notation to copying the numeric combination for each valid note from the .sm file
 - fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
 - cleaned up code for readability
