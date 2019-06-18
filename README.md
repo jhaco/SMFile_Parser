@@ -7,9 +7,9 @@ Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 - Note Timings (in seconds)
 - Note Placements (ex. 0001, 0201, etc)
 
-Then writes data to their respective .txt output files for valid .sm files.<br/>
-Only supports files with static BPM for the purpose of training the note generator program.<br/>
-Does not support 3/4th measures.<br/>
+Then writes data to their respective .txt output files for valid .sm files.\
+Only supports files with static BPM for the purpose of training the note generator program.\
+Does not support 3/4th measures.\
 Only reads the first difficulty listed.
 
 #### changelog:
