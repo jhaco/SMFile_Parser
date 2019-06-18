@@ -22,7 +22,7 @@ changelog:
 - fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
 - cleaned up code for readability
 - added formatting to .ogg files found within the directory
-- added example vanessa sm, txt and ogg files
+- added example vanessa .sm, .txt and .ogg files
 - fixed a bug where the parser skipped the last measure
 - replaced holds with normal note for note placement
 - added note placement for each note timing as a binary to decimal function, ignores mines
