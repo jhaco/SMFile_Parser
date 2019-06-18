@@ -14,7 +14,7 @@ Only reads the first difficulty listed.
 
 ---
 
-#### changelog:
+#### changelog (top/new):
 - added an error message to print the offending file name
 - included hold (2) and roll (3) note types
 - changed from binary/decimal note notation to copying the numeric combination for each valid note from the .sm file
