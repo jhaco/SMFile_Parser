@@ -12,6 +12,8 @@ Only supports files with static BPM for the purpose of training the note generat
 Does not support 3/4th measures.\
 Only reads the first difficulty listed.
 
+---
+
 #### changelog:
 - added an error message to print the offending file name
 - included hold (2) and roll (3) note types
