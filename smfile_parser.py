@@ -26,7 +26,7 @@ def format(src):
 #measure = 4 beats = 4 1/4th notes = 1
 #1/192 >  1 measure = 192 1/192nd notes
 
-def get_timing(measure, m_i, bpm):                                                                  #gets time
+def get_timing(measure, m_i, bpm, offset):                                                                  #gets time
     time            = []                                                                            #seconds per beat = 60/bpm
     measure_seconds = 4 * 60/bpm                                                                    #measure in seconds = 4 x seconds per beat
     note_192        = measure_seconds/192                                                           #time of notes in seconds
@@ -35,7 +35,7 @@ def get_timing(measure, m_i, bpm):                                              
 
     for i in range(len(measure)):
         if measure[i] == 1:
-            time.append(i * note_192 * X_192 + sum)
+            time.append(i * note_192 * X_192 + sum - offset)
 
     return time
 
@@ -47,6 +47,7 @@ def parse_sm(n):                                                                
     measure = []
     chars   = set('123456789')                                                                      #set of digits, not including 0
     flag    = False
+    offset  = 0.0
 
     with open(n, 'r', encoding='ascii', errors='ignore') as f:                                      #ignores non-ASCII text (ex. Japanese)      
         for line in f:                                                                              #reads by line
@@ -56,6 +57,9 @@ def parse_sm(n):                                                                
 
             if line.startswith('#BPMS:'):                                                           #BPM
                 x.BPM   = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
+
+            if line.startswith('#OFFSET:'):
+                offset = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
 
             if line.startswith('#KEYSOUNDS:') or line.startswith('#ATTACKS:'):                      #checks if the last hashtag property is read
                 flag = True
@@ -74,7 +78,7 @@ def parse_sm(n):                                                                
                         measure.append(0) 
 
             if line.startswith(',') or line.startswith(';'):
-                time = get_timing(measure, m_i, x.BPM)
+                time = get_timing(measure, m_i, x.BPM, offset)
                 x.notes.extend(time)                                                                #adds list of timestamps to x.notes
                 measure.clear()
                 m_i += 1
