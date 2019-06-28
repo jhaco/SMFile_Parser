@@ -37,3 +37,4 @@ Only reads the first difficulty listed.
 
 #### issues:
 - some .sm files that should work does not, throwing a divide by zero exception
+- a single file had been renamed incorrectly, unsure of what caused this
