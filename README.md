@@ -1,5 +1,5 @@
 ## SMFile_Parser
-#### Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0. Used with [Stepmania TXT Converter and SM Generator](https://github.com/jhaco/SMTXT_Converter) by me
+#### Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0. Used with [Stepmania File Writer](https://github.com/jhaco/SMTXT_Converter) by me
 
 Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 - Title
@@ -11,6 +11,10 @@ Then writes data to their respective .txt output files for valid .sm files.\
 Only supports files with static BPM for the purpose of training the note generator program.\
 Does not support 3/4th measures.\
 Only reads the first difficulty listed.
+
+#### links:
+
+- [Stepmania Notes](https://step-mania.fandom.com/wiki/Notes)
 
 ---
 
