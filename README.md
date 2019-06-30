@@ -14,7 +14,8 @@ Only reads the first difficulty listed.
 
 #### links:
 
-- [Stepmania Notes](https://step-mania.fandom.com/wiki/Notes)
+- [Stepmania .SM Formatting](https://github.com/stepmania/stepmania/wiki/sm)
+- [Stepmania Notes on Notes](https://step-mania.fandom.com/wiki/Notes)
 
 ---
 
