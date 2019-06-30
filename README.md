@@ -38,7 +38,7 @@ Only reads the first difficulty listed.
 - ignores non-ASCII (ex. Japanese) text in the title
 
 #### plans:
-- be able to convert the resultant .txt file back to a usable .sm file [here](https://github.com/jhaco/SMTXT_Converter)
+- ~~be able to convert the resultant .txt file back to a usable .sm file~~ [here](https://github.com/jhaco/SMTXT_Converter)
 
 #### issues:
 - some .sm files that should work does not, throwing a divide by zero exception
