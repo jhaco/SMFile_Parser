@@ -16,6 +16,7 @@ Only reads the first difficulty listed.
 
 - [Stepmania .SM Formatting](https://github.com/stepmania/stepmania/wiki/sm)
 - [Stepmania Note Colors](https://step-mania.fandom.com/wiki/Notes)
+- [It's About Time: An Article on Beats and Measure Calculation](https://sites.uci.edu/camp2014/2014/05/19/its-about-time/)
 
 ---
 
