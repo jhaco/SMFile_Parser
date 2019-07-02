@@ -40,7 +40,7 @@ Only reads the first difficulty listed.
 
 #### plans:
 - ~~be able to convert the resultant .txt file back to a usable .sm file~~ [here](https://github.com/jhaco/SMTXT_Converter)
-- be able to generate multiple .txt files for .sm with multiple difficulties
+- be able to parse all difficulties included in the target .sm file
 
 #### issues:
 - some .sm files that should work does not, throwing a divide by zero exception
