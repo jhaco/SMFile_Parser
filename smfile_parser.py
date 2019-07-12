@@ -24,18 +24,18 @@ def format(src):
 
 #BPM = beats/minute -> BPS = beats/second = BPM/60
 #measure = 4 beats = 4 1/4th notes = 1
-#1/192 >  1 measure = 192 1/192nd notes
+#1/256 >  1 measure = 256 1/256nd notes
 
 def get_timing(measure, m_i, bpm, offset):                                                                  #gets time
     time            = []                                                                            #seconds per beat = 60/bpm
     measure_seconds = 4 * 60/bpm                                                                    #measure in seconds = 4 x seconds per beat
-    note_192        = measure_seconds/192                                                           #time of notes in seconds
+    note_256        = measure_seconds/256                                                           #time of notes in seconds
     sum             = measure_seconds * m_i                                                         #sum of measures before in seconds
-    X_192           = 192/len(measure)                                                              #number of 1/192th notes between 1/Xth notes
+    X_256           = 256/len(measure)                                                              #number of 1/256th notes between 1/Xth notes
 
     for i in range(len(measure)):
         if measure[i] == 1:
-            time.append(i * note_192 * X_192 + sum - offset)
+            time.append(i * note_256 * X_256 + sum - offset)
 
     return time
 
