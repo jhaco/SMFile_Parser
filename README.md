@@ -21,6 +21,7 @@ Only reads the first difficulty listed.
 ---
 
 #### changelog (top-new):
+- corrected from 1/192th notes to 1/256th notes
 - added offset timings (if present) resulting in more accurate translations
 - added an error message to print the offending file name
 - included hold (2) and roll (3) note types
