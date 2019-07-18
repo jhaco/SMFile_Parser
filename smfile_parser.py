@@ -56,6 +56,9 @@ def parse_sm(n):                                                                
                 x.title = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
 
             if line.startswith('#BPMS:'):                                                           #BPM
+                if "," in line:
+                    raise Exception('Multiple bpms detected')
+                    break
                 x.BPM   = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
 
             if line.startswith('#OFFSET:'):
@@ -107,6 +110,7 @@ def output_file(n,x):                                                           
 #MAIN
 for f in get_file_names("./"):
     if f.endswith(".sm"):
+        x = Step()
         try:
             x = parse_sm(f)
             output_file(f,x)
