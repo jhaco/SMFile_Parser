@@ -45,7 +45,7 @@ Only reads the first difficulty listed.
 #### plans:
 - ~~be able to convert the resultant .txt file back to a usable .sm file~~ [here](https://github.com/jhaco/SMTXT_Converter)
 - be able to parse all difficulties included in the target .sm file
-- be able to check .sm files for static BPM and only parse those
+- ~~be able to check .sm files for static BPM and only parse those~~
 
 #### issues:
 - some .sm files that should work does not, throwing a divide by zero exception
