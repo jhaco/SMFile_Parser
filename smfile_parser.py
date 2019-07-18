@@ -61,7 +61,7 @@ def parse_sm(n):                                                                
             if line.startswith('#OFFSET:'):
                 offset = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
 
-            if line.startswith('#KEYSOUNDS:') or line.startswith('#ATTACKS:'):                      #checks if the last hashtag property is read
+            if line.startswith('#NOTES:'):                                                          #checks if the last hashtag property is read
                 flag = True
 
             #=====================================================================================
