@@ -9,6 +9,7 @@ Batch processes all .sm files in current dir of smfile_parser.py and parses for:
 
 Then writes data to their respective .txt output files for valid .sm files.\
 Only supports files with static BPM for the purpose of training the note generator program.\
+Is able to skip .sm files with varying BPM.\
 Does not support 3/4th measures.\
 Only reads the first difficulty listed.
 
@@ -21,6 +22,7 @@ Only reads the first difficulty listed.
 ---
 
 #### changelog (top-new):
+- added a check for .sm files with static BPM and ignores files with changing BPM
 - changed "#KEYSOUNDS" checks to "#NOTES", it's basically the same thing
 - corrected from 1/192th notes to 1/256th notes
 - added offset timings (if present) resulting in more accurate translations
