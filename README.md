@@ -21,6 +21,7 @@ Only reads the first difficulty listed.
 ---
 
 #### changelog (top-new):
+- changed "#KEYSOUNDS" checks to "#NOTES", it's basically the same thing
 - corrected from 1/192th notes to 1/256th notes
 - added offset timings (if present) resulting in more accurate translations
 - added an error message to print the offending file name
