@@ -1,3 +1,10 @@
+# Keep inputs/ & outputs/ folders but remove all data
+inputs/*
+!inputs/vanessa.ogg
+!inputs/Vanessa.sm
+
+outputs/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
