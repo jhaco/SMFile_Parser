@@ -43,6 +43,7 @@ Only reads the first difficulty listed.
 - ignores non-ASCII (ex. Japanese) text in the title
 
 #### plans:
+- full rewrite of code for readability and ease of modification.
 - ~~be able to convert the resultant .txt file back to a usable .sm file~~ [here](https://github.com/jhaco/SMTXT_Converter)
 - be able to parse all difficulties included in the target .sm file
 - ~~be able to check .sm files for static BPM and only parse those~~
