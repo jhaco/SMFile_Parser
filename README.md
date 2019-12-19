@@ -14,9 +14,9 @@ Only reads the first difficulty listed (plans to read and output multiple diffic
 
 #### usage:
 
-- Run the script once to create both input and output folders.
-- Copy the Stepmania song folders (NOT THE PACK FOLDER) into input
-- Run the script
+- Run the script to generate both folders.
+- Copy the Stepmania song folders (NOT THE PACK FOLDER) into the ```parseIn``` folder and run the script.
+- Successfully parsed files will be generated in the ```parseOut``` folder.
 
 #### links:
 
