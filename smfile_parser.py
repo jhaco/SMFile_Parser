@@ -5,10 +5,10 @@ import re
 import time
 
 def make_folder(dir):                                                       #generate input/output folders. Place song folders in input.
-    if not isdir(join(dir, "input")):
-        os.makedirs(join(dir, "input"))
-    if not isdir(join(dir, "output")):
-        os.makedirs(join(dir, "output"))
+    if not isdir(join(dir, "parseIn")):
+        os.makedirs(join(dir, "parseIn"))
+    if not isdir(join(dir, "parseOut")):
+        os.makedirs(join(dir, "parseOut"))
 
 def get_file_name(path):                                                    #gets file name
     return [f for f in os.listdir(path) if isfile(join(path, f))]
@@ -21,7 +21,7 @@ def format_file_name(f):                                                    #for
     formatted = re.sub('[^a-z0-9-_ ]', '', name)                            #ignores special characters, except - and _
     return re.sub(' ', '_', formatted)                                      #replaces whitespace with _
 
-def output_file(file_name, x):                                              #outputs results from Step() to file text
+def output_file(file_name, x, output_dir):                                              #outputs results from Step() to file text
     ofile = file_name + '.txt'
 
     with open(join(output_dir, ofile), 'w') as f:
@@ -119,11 +119,10 @@ def parse_sm(sm_file):
 def parse_by_folder(input_dir, output_dir):
     for folder in get_folder_name(input_dir):                                                      #parses song folders                          
         input_path = join(input_dir, folder)
-        file_names = get_file_name(input_path)
         
         ogg = None
         sm  = None
-        for file in file_names:
+        for file in get_file_name(input_path):
             if file.endswith('.ogg'):
                 ogg = file
             elif file.endswith('.sm'):
@@ -138,7 +137,7 @@ def parse_by_folder(input_dir, output_dir):
         new_file = format_file_name(sm)
         try:
             sm_data = parse_sm(join(input_path, sm))
-            output_file(new_file, sm_data)
+            output_file(new_file, sm_data, output_dir)
             copyfile(join(input_path, ogg), join(output_dir, new_file + '.ogg'))
         except Exception:
             print('Write failed: ' + sm)    
@@ -155,7 +154,7 @@ def parse_by_file(input_dir, output_dir):                                       
         if new_file in format_ogg_dict:
             try:
                 sm_data = parse_sm(join(input_dir, sm))
-                output_file(new_file, sm_data)
+                output_file(new_file, sm_data, output_dir)
             except Exception:
                 print('Write failed: ' + sm)
                 continue
@@ -166,11 +165,12 @@ def parse_by_file(input_dir, output_dir):                                       
 
 if __name__ == '__main__':
     dir = dirname(realpath(__file__))
-    start_time = time.time()
-
     make_folder(dir)
-    input_dir  = join(dir, 'input')
-    output_dir = join(dir, 'output')
+
+    start_time = time.time()
+    
+    input_dir  = join(dir, 'parseIn')
+    output_dir = join(dir, 'parseOut')
 
     parse_by_folder(input_dir, output_dir)
     parse_by_file(input_dir, output_dir)
