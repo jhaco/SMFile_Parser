@@ -14,7 +14,7 @@
 #### Usage:
 
 - Run the script to generate both folders.
-- Copy the Stepmania song folders (NOT THE PACK FOLDER) into the ```parseIn``` folder and run the script.
+- Copy the Stepmania song folders ***NOT THE PACK FOLDER*** into the ```parseIn``` folder and run the script.
 - Successfully parsed files will be generated in the ```parseOut``` folder.
 
 #### Links:
