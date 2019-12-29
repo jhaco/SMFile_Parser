@@ -8,6 +8,7 @@ import time
 def make_folders(dir_names):  # generate input/output folders. Place song folders in input.
     [os.makedirs(dir_name, exist_ok=True) for dir_name in dir_names]
 
+
 def get_file_name(path):  # gets file name
     return [f for f in os.listdir(path) if isfile(join(path, f))]
 
@@ -57,15 +58,12 @@ def convert_note(line):
 # 1/256    -> 256 * 1/256th notes           = 1 measure
 
 def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in seconds for each line
-    line_timing = []
     measure_seconds = 4 * 60 / bpm  # length of measure in seconds
     note_256 = measure_seconds / 256  # length of each 1/256th note in the measure in seconds
-    sum = measure_seconds * measure_index  # accumulated time from previous measures
+    measure_timing = measure_seconds * measure_index  # accumulated time from previous measures
     fraction_256 = 256 / len(measure)  # number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
 
-    for i in range(len(measure)):
-        if measure[i] == 1:
-            line_timing.append(i * note_256 * fraction_256 + sum - offset)
+    line_timing = [i * note_256 * fraction_256 + measure_timing - offset for i in measure if i == 1]
 
     return line_timing
 
@@ -75,7 +73,6 @@ def parse_sm(sm_file):
     measure = []
     measure_index = 0
 
-    chars = set('123456789')
     flag = False
 
     with open(sm_file, encoding='ascii', errors='ignore') as f:
@@ -84,7 +81,7 @@ def parse_sm(sm_file):
                 step_dict['title'] = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
             if line.startswith('#BPMS:'):
                 if ',' in line:  # raises Exception if multiple BPMS detected
-                    raise Exception
+                    raise ValueError('Multiple BPMs detected')
                 step_dict['BPM'] = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
             if line.startswith('#OFFSET:'):
                 step_dict['offset'] = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
@@ -95,9 +92,7 @@ def parse_sm(sm_file):
 
             if flag:
                 if line[0].isdigit():
-                    check = False
-                    if any((c in chars) for c in line):
-                        check = True
+                    check = True if any((c in set('123456789')) for c in line) else False
                     if check:
                         measure.append(1)
                         step_dict['types'].append(convert_note(line.rstrip('\n')))
@@ -174,7 +169,7 @@ if __name__ == '__main__':
     out_dir = join(script_dir, 'parseOut')
 
     make_folders([in_dir, out_dir])
-    
+
     parse_by_folder(in_dir, out_dir)
     parse_by_file(in_dir, out_dir)
 
