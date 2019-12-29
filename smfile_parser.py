@@ -30,23 +30,21 @@ def output_file(file_name, x, output_dir):  # outputs results from Step() to fil
     ofile = file_name + '.txt'
 
     with open(join(output_dir, ofile), 'w') as f:
-        f.write('TITLE ' + str(x.title) + '\n')
-        f.write('BPM   ' + str(x.BPM) + '\n')
+        f.write('TITLE ' + str(x['title']) + '\n')
+        f.write('BPM   ' + str(x['BPM']) + '\n')
         f.write('NOTES\n')
-        for i in range(len(x.notes)):
-            f.write(str(x.types[i]) + " " + str(x.notes[i]) + '\n')
+        for i in range(len(x['notes'])):
+            f.write(str(x['types'][i]) + " " + str(x['notes'][i]) + '\n')
 
 
 # ===================================================================================================
 
-class Step:  # Step
-    def __init__(self):  # constructor/instanced Step variable
-        self.title = 'empty'
-        self.BPM = 0.0
-        self.notes = []
-        self.types = []
-        self.offset = 0.0
-        # self.difficulty = "easy"
+def get_step_dict():  # Step
+    return {'title': '',
+            'BPM': 0.0,
+            'notes': [],
+            'types': [],
+            'offset': 0.0}
 
 
 # ===================================================================================================
@@ -77,7 +75,7 @@ def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in 
 
 
 def parse_sm(sm_file):
-    x = Step()
+    step_dict = get_step_dict()
     measure = []
     measure_index = 0
 
@@ -87,13 +85,13 @@ def parse_sm(sm_file):
     with open(sm_file, encoding='ascii', errors='ignore') as f:
         for line in f:
             if line.startswith('#TITLE:'):
-                x.title = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
+                step_dict['title'] = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
             if line.startswith('#BPMS:'):
                 if ',' in line:  # raises Exception if multiple BPMS detected
                     raise Exception
-                x.BPM = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
+                step_dict['BPM'] = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
             if line.startswith('#OFFSET:'):
-                x.offset = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
+                step_dict['offset'] = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
             if line.startswith('#NOTES:'):
                 flag = True
 
@@ -106,22 +104,22 @@ def parse_sm(sm_file):
                         check = True
                     if check:
                         measure.append(1)
-                        x.types.append(convert_note(line.rstrip('\n')))
+                        step_dict['types'].append(convert_note(line.rstrip('\n')))
                     else:
                         measure.append(0)
                 if line.startswith(','):
-                    time = calculate_timing(measure, measure_index, x.BPM, x.offset)
-                    x.notes.extend(time)
+                    time = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
+                    step_dict['notes'].extend(time)
                     measure.clear()
                     measure_index += 1
 
                 if line.startswith(';'):
-                    time = calculate_timing(measure, measure_index, x.BPM, x.offset)
-                    x.notes.extend(time)
+                    time = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
+                    step_dict['notes'].extend(time)
                     measure.clear()
                     break
 
-    return x
+    return step_dict
 
 
 # ===================================================================================================
