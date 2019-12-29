@@ -5,12 +5,8 @@ import re
 import time
 
 
-def make_folder(dir):  # generate input/output folders. Place song folders in input.
-    if not isdir(join(dir, "parseIn")):
-        os.makedirs(join(dir, "parseIn"))
-    if not isdir(join(dir, "parseOut")):
-        os.makedirs(join(dir, "parseOut"))
-
+def make_folders(dir_names):  # generate input/output folders. Place song folders in input.
+    [os.makedirs(dir_name, exist_ok=True) for dir_name in dir_names]
 
 def get_file_name(path):  # gets file name
     return [f for f in os.listdir(path) if isfile(join(path, f))]
@@ -61,7 +57,7 @@ def convert_note(line):
 # 1/256    -> 256 * 1/256th notes           = 1 measure
 
 def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in seconds for each line
-    time = []
+    line_timing = []
     measure_seconds = 4 * 60 / bpm  # length of measure in seconds
     note_256 = measure_seconds / 256  # length of each 1/256th note in the measure in seconds
     sum = measure_seconds * measure_index  # accumulated time from previous measures
@@ -69,9 +65,9 @@ def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in 
 
     for i in range(len(measure)):
         if measure[i] == 1:
-            time.append(i * note_256 * fraction_256 + sum - offset)
+            line_timing.append(i * note_256 * fraction_256 + sum - offset)
 
-    return time
+    return line_timing
 
 
 def parse_sm(sm_file):
@@ -107,17 +103,13 @@ def parse_sm(sm_file):
                         step_dict['types'].append(convert_note(line.rstrip('\n')))
                     else:
                         measure.append(0)
-                if line.startswith(','):
-                    time = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
-                    step_dict['notes'].extend(time)
+                if line.startswith(',') or line.startswith(';'):
+                    line_timing = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
+                    step_dict['notes'].extend(line_timing)
                     measure.clear()
+                    if line.startswith(';'):
+                        break
                     measure_index += 1
-
-                if line.startswith(';'):
-                    time = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
-                    step_dict['notes'].extend(time)
-                    measure.clear()
-                    break
 
     return step_dict
 
@@ -147,8 +139,8 @@ def parse_by_folder(input_dir, output_dir):
             sm_data = parse_sm(join(input_path, sm))
             output_file(new_file, sm_data, output_dir)
             copyfile(join(input_path, ogg), join(output_dir, new_file + '.ogg'))
-        except Exception:
-            print('Write failed: ' + sm)
+        except Exception as ex:
+            print('Write failed for %s: %r' % (sm, ex))
 
 
 def parse_by_file(input_dir, output_dir):  # parses loose .sm and .ogg files
@@ -164,8 +156,8 @@ def parse_by_file(input_dir, output_dir):  # parses loose .sm and .ogg files
             try:
                 sm_data = parse_sm(join(input_dir, sm))
                 output_file(new_file, sm_data, output_dir)
-            except Exception:
-                print('Write failed: ' + sm)
+            except Exception as ex:
+                print('Write failed for %s: %r' % (sm, ex))
                 continue
 
             copyfile(join(input_dir, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
@@ -174,16 +166,17 @@ def parse_by_file(input_dir, output_dir):  # parses loose .sm and .ogg files
 # ===================================================================================================
 
 if __name__ == '__main__':
-    dir = dirname(realpath(__file__))
-    make_folder(dir)
+    script_dir = dirname(realpath(__file__))
 
     start_time = time.time()
 
-    input_dir = join(dir, 'parseIn')
-    output_dir = join(dir, 'parseOut')
+    in_dir = join(script_dir, 'parseIn')
+    out_dir = join(script_dir, 'parseOut')
 
-    parse_by_folder(input_dir, output_dir)
-    parse_by_file(input_dir, output_dir)
+    make_folders([in_dir, out_dir])
+    
+    parse_by_folder(in_dir, out_dir)
+    parse_by_file(in_dir, out_dir)
 
     end_time = time.time()
 
