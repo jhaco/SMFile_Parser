@@ -104,11 +104,11 @@ def parse(input_dir, output_dir):
             new_file = format_file_name(sm_file)
             if new_file in format_ogg_dict:
                 try:
-                    sm_data = parse_sm(join(input_dir, sm_file))
+                    sm_data = parse_sm(join(root, sm_file))
                     # write sm text data to output dir
                     output_file(new_file, sm_data, output_dir)
                     # move and rename .ogg file to output dir
-                    copyfile(join(input_dir, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
+                    copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
                 except Exception as ex:
                     print('Write failed for %s: %r' % (sm_file, ex))
 
