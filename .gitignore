@@ -3,7 +3,7 @@ inputs/*
 !inputs/vanessa.ogg
 !inputs/Vanessa.sm
 
-outputs/*
+parseOut/*
 
 # Pycharm workspace
 .idea/

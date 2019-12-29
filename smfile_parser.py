@@ -1,6 +1,7 @@
 import os
 import re
 import time
+from collections import defaultdict
 from os.path import join, dirname, realpath
 from shutil import copyfile
 
@@ -29,16 +30,6 @@ def output_file(file_name, x, output_dir):  # outputs results from Step() to fil
 
 # ===================================================================================================
 
-def get_step_dict():  # Step
-    return {'title': '',
-            'BPM': 0.0,
-            'notes': [],
-            'types': [],
-            'offset': 0.0}
-
-
-# ===================================================================================================
-
 def convert_note(line):
     convert = re.sub('[MKLF]', '0', line)  # removes extra notes: M, K, L, F
     return re.sub('4', '1', convert)  # removes 4 note
@@ -62,7 +53,7 @@ def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in 
 
 
 def parse_sm(sm_file):
-    step_dict = get_step_dict()
+    step_dict = defaultdict(list)
     measure = []
     measure_index = 0
 
