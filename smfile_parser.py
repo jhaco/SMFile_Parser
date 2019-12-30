@@ -47,7 +47,7 @@ def calculate_timing(measure, measure_index, bpm, offset):  # calculate time in 
     measure_timing = measure_seconds * measure_index  # accumulated time from previous measures
     fraction_256 = 256 / len(measure)  # number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
 
-    line_timing = [i * note_256 * fraction_256 + measure_timing - offset for i in measure if i == 1]
+    line_timing = [i * note_256 * fraction_256 + measure_timing - offset for i, is_set in enumerate(measure) if is_set]
 
     return line_timing
 
@@ -76,10 +76,10 @@ def parse_sm(sm_file):
                 if line[0].isdigit():
                     check = True if any((c in set('123456789')) for c in line) else False
                     if check:
-                        measure.append(1)
+                        measure.append(True)
                         step_dict['types'].append(convert_note(line.rstrip('\n')))
                     else:
-                        measure.append(0)
+                        measure.append(False)
                 if line.startswith(',') or line.startswith(';'):
                     line_timing = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
                     step_dict['notes'].extend(line_timing)
