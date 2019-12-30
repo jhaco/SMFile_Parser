@@ -72,6 +72,8 @@ def parse_sm(sm_file):
                     step_dict['offset'] = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
                 if line.startswith('#NOTES:'):
                     flag = True
+                if line.startswith('#STOPS:') and line.rstrip('\n') != "#STOPS:;":
+                    raise ValueError('Stop detected')
             else:  # start of note processing
                 if line[0].isdigit():
                     check = True if any((c in set('123456789')) for c in line) else False
