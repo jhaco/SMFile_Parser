@@ -7,7 +7,7 @@ Parses all .sm files in the `parseIn` folder by default for the following inform
 - Note Timings (in seconds)
 - Note Placements (ex. 0001, 0201, etc)
 
-Writes processed data to their respective .txt files for successfully parsed .sm files to the `parseOut` folder by default.
+Writes processed data to their respective .txt files for successfully parsed .sm files in the `parseOut` folder by default.
 
 #### Usage:
 - Copy the Stepmania song folders into the input folder and run the script. The default input folder is `parseIn`.
@@ -27,19 +27,17 @@ Writes processed data to their respective .txt files for successfully parsed .sm
 ---
 
 #### Changelog (top-new):
-- added argparse functionality with leaner code implementations from cpuguy96
+- added argparse functionality to specify directories, with leaner code implementations from cpuguy96
 - refactored code for readability with changes from cpuguy96 for file management
-- added a check for .sm files with static BPM and ignores files with changing BPM
+- added a check for .sm files with static BPM to ignore files with changing BPM
 - changed "#KEYSOUNDS" checks to "#NOTES", it's basically the same thing
 - corrected from 1/192th notes to 1/256th notes
-- added offset timings (if present) resulting in more accurate translations
+- added offset timings (if present); the translations are now completely accurate
 - added an error message to print the offending file name
 - included hold (2) and roll (3) note types
 - changed from binary/decimal note notation to copying the numeric combination for each valid note from the .sm file
 - fixed a bug where the Step.note and Step.types were not cleared if errors occured while parsing a previous file
-- cleaned up code for readability
 - added formatting to .ogg files found within the directory
-- added example vanessa .sm, .txt and .ogg files
 - fixed a bug where the parser skipped the last measure
 - replaced holds with normal note for note placement
 - added note placement for each note timing as a binary to decimal function, ignores mines
