@@ -12,7 +12,7 @@
 ###### Only reads the first difficulty listed (plans to read and output multiple difficulties TBA)
 
 #### Usage:
-- Copy the Stepmania song folders into the input folder. The default input folder is `parseIn`.
+- Copy the Stepmania song folders into the input folder and run the script. The default input folder is `parseIn`.
 - Successfully parsed files will be generated in the output folder. The default output folder is `parseOut`.
 - If different folders are used, specify them by appending `--input inputfolder` and/or `--output outputfolder`.
   * Example: `python smfile_parser.py --input inputfolder --output outputfolder`
