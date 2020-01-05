@@ -1,9 +1,12 @@
 # Keep inputs/ & outputs/ folders but remove all data
-inputs/*
-!inputs/vanessa.ogg
-!inputs/Vanessa.sm
+parseIn/*
+!parseIn/vanessa.ogg
+!parseIn/Vanessa.sm
 
-outputs/*
+parseOut/*
+
+# Pycharm workspace
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
