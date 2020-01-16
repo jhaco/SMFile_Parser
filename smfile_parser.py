@@ -12,7 +12,7 @@ def format_file_name(f):    #formats file name to ASCII
     return re.sub(' ', '_', formatted)  #replaces whitespace with _
 
 def output_file(file_name, x, output_dir):  #outputs results to file text
-    ofile = str(x['difficulty']) + '-' + file_name + '.txt'
+    ofile = file_name + '.txt'
 
     with open(join(output_dir, ofile), 'w') as f:
         f.write('TITLE ' + str(x['title']) + '\n')
@@ -39,7 +39,7 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
     measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
     fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
 
-    line_timing = [i * note_256 * fraction_256 + measure_timing - offset for i, is_set in enumerate(measure) if is_set]
+    line_timing = [str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set]
     
     return line_timing
 
@@ -68,7 +68,10 @@ def parse_sm(sm_file, new_file, output_dir):
                     flag     = True
                     next(f)
                     next(f)
-                    step_dict['difficulty'] = next(f).lstrip(' ').rstrip(':\n')
+                    step_dict['types'].append("")
+                    step_dict['notes'].append("")
+                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
 
             else:   #start of note processing
                 if line[0].isdigit():
@@ -87,11 +90,15 @@ def parse_sm(sm_file, new_file, output_dir):
                     measure_index += 1
                 elif line.startswith('#NOTES:'):
                     measure_index = 0
-                    step_dict['types'].clear()
-                    step_dict['notes'].clear()
+                    #step_dict['types'].clear()
+                    #step_dict['notes'].clear()
                     next(f)
                     next(f)
-                    step_dict['difficulty'] = next(f).lstrip(' ').rstrip(':\n')
+                    step_dict['types'].append("")
+                    step_dict['notes'].append("")
+                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
+    return step_dict
 
 #===================================================================================================
 
@@ -106,9 +113,9 @@ def parse(input_dir, output_dir):
             new_file = format_file_name(sm_file)
             if new_file in format_ogg_dict:
                 try:
-                    parse_sm(join(root, sm_file), new_file, output_dir)
+                    sm_data = parse_sm(join(root, sm_file), new_file, output_dir)
                     # write sm text data to output dir
-                    #output_file(new_file, sm_data, output_dir)
+                    output_file(new_file, sm_data, output_dir)
                     # move and rename .ogg file to output dir
                     copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
                 except Exception as ex:
