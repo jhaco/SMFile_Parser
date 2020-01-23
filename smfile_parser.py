@@ -68,9 +68,7 @@ def parse_sm(sm_file, new_file, output_dir):
                     flag     = True
                     next(f)
                     next(f)
-                    step_dict['types'].append("")
-                    step_dict['notes'].append("")
-                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['types'].append("DIFFICULTY")
                     step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
 
             else:   #start of note processing
@@ -94,9 +92,7 @@ def parse_sm(sm_file, new_file, output_dir):
                     #step_dict['notes'].clear()
                     next(f)
                     next(f)
-                    step_dict['types'].append("")
-                    step_dict['notes'].append("")
-                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['types'].append("DIFFICULTY")
                     step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
     return step_dict
 
