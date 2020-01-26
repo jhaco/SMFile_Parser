@@ -68,8 +68,6 @@ def parse_sm(sm_file, new_file, output_dir):
                     flag     = True
                     next(f)
                     next(f)
-                    step_dict['types'].append("") #required for smfile_writer to correctly terminate parsing for each difficulty.
-                    step_dict['notes'].append("")
                     step_dict['types'].append("DIFFICULTY ")
                     step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
 
@@ -92,8 +90,6 @@ def parse_sm(sm_file, new_file, output_dir):
                     measure_index = 0                   
                     next(f)
                     next(f)
-                    step_dict['types'].append("") #required for smfile_writer to correctly terminate parsing for each difficulty.
-                    step_dict['notes'].append("")
                     step_dict['types'].append("DIFFICULTY ")
                     step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
     return step_dict
