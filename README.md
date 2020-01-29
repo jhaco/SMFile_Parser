@@ -1,5 +1,5 @@
 ## SMFile_Parser
-###### Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0. Used with [Stepmania File Writer](https://github.com/jhaco/SMTXT_Converter). Currently supports files with static BPM to reduce complexity in training the note generator program, and only reads the first difficulty found in the file.
+###### Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0. Used with [Stepmania File Writer](https://github.com/jhaco/SMTXT_Converter). Currently supports files with static BPM to reduce complexity in training the note generator program. Now supports multiple difficulties!
 
 Parses all .sm files in the `parseIn` folder by default for the following information:
 - Title
@@ -33,6 +33,7 @@ Writes processed data to their respective .txt files for successfully parsed .sm
  <summary>Changelog</summary>
  
  Sorted by most recent:
+ - added parsing for multiple difficulties
  - added argparse functionality to specify directories, with leaner code implementations from cpuguy96
  - refactored code for readability with changes from cpuguy96 for file management
  - added a check for .sm files with static BPM to ignore files with changing BPM

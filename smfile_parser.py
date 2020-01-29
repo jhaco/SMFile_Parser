@@ -39,11 +39,11 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
     measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
     fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
 
-    line_timing = [i * note_256 * fraction_256 + measure_timing - offset for i, is_set in enumerate(measure) if is_set]
+    line_timing = [str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set]
     
     return line_timing
 
-def parse_sm(sm_file):
+def parse_sm(sm_file, new_file, output_dir):
     step_dict = defaultdict(list)
     measure         = []
     measure_index   = 0
@@ -55,16 +55,21 @@ def parse_sm(sm_file):
             if not flag:
                 if line.startswith('#TITLE:'):
                     step_dict['title']  = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
-                if line.startswith('#BPMS:'):
+                elif line.startswith('#BPMS:'):
                     if ',' in line:  # raises Exception if multiple BPMS detected
                         raise ValueError('Multiple BPMs detected')
                     step_dict['BPM']    = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
-                if line.startswith('#OFFSET:'):
+                elif line.startswith('#OFFSET:'):
                     step_dict['offset'] = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
-                if line.startswith('#NOTES:'):
-                    flag     = True
-                if line.startswith('#STOPS:') and line.rstrip('\n') != "#STOPS:;":
+                elif line.startswith('#STOPS:') and line.rstrip('\n') != "#STOPS:;":
                     raise ValueError('Stop detected')
+
+                elif line.startswith('#NOTES:'):
+                    flag     = True
+                    next(f)
+                    next(f)
+                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
 
             else:   #start of note processing
                 if line[0].isdigit():
@@ -74,14 +79,19 @@ def parse_sm(sm_file):
                         step_dict['types'].append(convert_note(line.rstrip('\n')))
                     else:
                         measure.append(False)
-                if line.startswith(',') or line.startswith(';'):
+                elif line.startswith(',') or line.startswith(';'):
                     line_timing = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
                     step_dict['notes'].extend(line_timing)
                     measure.clear()
                     if line.startswith(';'):
-                        break
+                        output_file(new_file, step_dict, output_dir)
                     measure_index += 1
-
+                elif line.startswith('#NOTES:'):
+                    measure_index = 0                   
+                    next(f)
+                    next(f)
+                    step_dict['types'].append("DIFFICULTY ")
+                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
     return step_dict
 
 #===================================================================================================
@@ -97,7 +107,7 @@ def parse(input_dir, output_dir):
             new_file = format_file_name(sm_file)
             if new_file in format_ogg_dict:
                 try:
-                    sm_data = parse_sm(join(root, sm_file))
+                    sm_data = parse_sm(join(root, sm_file), new_file, output_dir)
                     # write sm text data to output dir
                     output_file(new_file, sm_data, output_dir)
                     # move and rename .ogg file to output dir
