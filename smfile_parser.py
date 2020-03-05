@@ -1,101 +1,95 @@
-import os
-from os.path import isfile, join, isdir, dirname, realpath
-from shutil import copyfile
 from collections import defaultdict
-import re
-import time
+from os import makedirs, walk
+from os.path import dirname, isdir, join, realpath
+from re import sub
+from shutil import copyfile
 import argparse
+import time
 
 def format_file_name(f):    #formats file name to ASCII
-    name = "".join(f.split('.')[:-1]).lower()   #lowercase; splits by period; keeps extension
-    formatted = re.sub('[^a-z0-9-_ ]', '', name)    #ignores special characters, except - and _
-    return re.sub(' ', '_', formatted)  #replaces whitespace with _
+    name = "".join(f.split('.')[:-1]).lower()   #lowercase; splits by period; removes extension
+    formatted = sub('[^a-z0-9-_ ]', '', name)    #ignores special characters, except - and _
+    return sub(' ', '_', formatted)  #replaces whitespace with _
 
-def output_file(file_name, x, output_dir):  #outputs results to file text
-    ofile = file_name + '.txt'
-
-    with open(join(output_dir, ofile), 'w') as f:
-        f.write('TITLE ' + str(x['title']) + '\n')
-        f.write('BPM   ' + str(x['BPM']) + '\n')
-        f.write('NOTES\n')
-        for note_type, note in zip(x['types'], x['notes']):
-            f.write(str(note_type) + " " + str(note) + '\n')
-
-#===================================================================================================
-
-def convert_note(line):                                                      
-    convert = re.sub('[MKLF]', '0', line)   #removes extra notes: M, K, L, F
-    return re.sub('4', '1', convert)    #removes 4 note
-
-#===================================================================================================
-
-# BPM       = beats/minute -> BPS = beats/second = BPM/60
-# measure   = 4 beats = 4 * 1/4th notes     = 1 note
-# 1/256    -> 256 * 1/256th notes           = 1 measure
-
-def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in seconds for each line
-    measure_seconds = 4 * 60/bpm    #length of measure in seconds   
-    note_256        = measure_seconds/256   #length of each 1/256th note in the measure in seconds
-    measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
-    fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
-
-    line_timing = [str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set]
-    
-    return line_timing
-
-def parse_sm(sm_file, new_file, output_dir):
-    step_dict = defaultdict(list)
-    measure         = []
-    measure_index   = 0
-
-    flag            = False
+def get_data(sm_file):
+    data = defaultdict(list)
+    flag = False
 
     with open(sm_file, encoding='ascii', errors='ignore') as f:
         for line in f:
             if not flag:
                 if line.startswith('#TITLE:'):
-                    step_dict['title']  = line.lstrip('#TITLE').lstrip(':').rstrip(';\n')
+                    data['title'] = line
                 elif line.startswith('#BPMS:'):
-                    if ',' in line:  # raises Exception if multiple BPMS detected
+                    if ',' in line:
                         raise ValueError('Multiple BPMs detected')
-                    step_dict['BPM']    = float(line.lstrip('#BPMS:0.0').lstrip('0').lstrip('=').rstrip(';\n'))
+                    data['bpm'] = line
                 elif line.startswith('#OFFSET:'):
-                    step_dict['offset'] = float(line.lstrip('#OFFSET').lstrip(':').rstrip(';\n'))
-                elif line.startswith('#STOPS:') and line.rstrip('\n') != "#STOPS:;":
+                    data['offset'] = line
+                elif line.startswith('#STOPS') and line.rstrip('\n') != '#STOPS:;':
                     raise ValueError('Stop detected')
-
                 elif line.startswith('#NOTES:'):
-                    flag     = True
+                    flag = True
+            if flag:
+                if not (line.startswith(' ') or line.startswith('/') or line.startswith('\n') or line.startswith('#')):
+                    data['notes'].append(sub('4', '1', sub('[MKLF]', '0', line)).rstrip('\n'))
+                if line.startswith('#NOTES:'):
                     next(f)
                     next(f)
-                    step_dict['types'].append("DIFFICULTY ")
-                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
+                    data['notes'].append('DIFFICULTY ' + next(f).lstrip(' ').rstrip(':\n'))
 
-            else:   #start of note processing
-                if line[0].isdigit():
-                    check = True if any((c in set('123456789')) for c in line) else False
-                    if check:
-                        measure.append(True)
-                        step_dict['types'].append(convert_note(line.rstrip('\n')))
-                    else:
-                        measure.append(False)
-                elif line.startswith(',') or line.startswith(';'):
-                    line_timing = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
-                    step_dict['notes'].extend(line_timing)
-                    measure.clear()
-                    measure_index += 1
-                elif line.startswith('#NOTES:'):
-                    measure_index = 0                   
-                    next(f)
-                    next(f)
-                    step_dict['types'].append("DIFFICULTY ")
-                    step_dict['notes'].append(next(f).lstrip(' ').rstrip(':\n'))
-    return step_dict
+    return data
 
-#===================================================================================================
+def clean_data(data):
+    data['title']  = data['title'].lstrip('#TILE').lstrip(':').rstrip(';\n')
+    data['bpm']    = float(data['bpm'].lstrip('#BPMS:.0').lstrip('=').rstrip(';\n'))
+    data['offset'] = float(data['offset'].lstrip('#OFSET:').rstrip(';\n'))
+
+def calculate_timing(measure, position, bpm, offset):
+    mlength    = 4 * 60/bpm    #length of measure in seconds   
+    notelength = mlength/256   #length of each 1/256th note in the measure in seconds
+    mtime      = mlength * position   #accumulated time from previous measures
+    beatlength = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
+
+    timing = [measure[i] + ' ' + str(i * notelength * beatlength + mtime - offset) for i, is_set in enumerate(measure) if is_set != None]
+    
+    return timing
+
+def generate_timing(data):
+    measure = []
+    notes = []
+    position = 0
+
+    for line in data['notes']:
+        if line[0].isdigit():
+            check = True if any((c in set('123456789')) for c in line) else False
+            if check:
+                measure.append(line)
+            else:
+                measure.append(None)
+        elif line.startswith(',') or line.startswith(';'):
+            timing = calculate_timing(measure, position, data['bpm'], data['offset'])
+            notes.extend(timing)
+            measure.clear()
+            position += 1
+        elif line.startswith('DIFFICULTY'):
+            notes.append(line)
+            position = 0
+    
+    data['notes'] = notes
+
+def output_file(file_name, data, output_dir):  #outputs results to file text
+    ofile = file_name + '.txt'
+
+    with open(join(output_dir, ofile), 'w') as f:
+        f.write('TITLE ' + data['title'] + '\n')
+        f.write('BPM   ' + str(data['bpm']) + '\n')
+        f.write('NOTES\n')
+        for note in data['notes']:
+            f.write(note + '\n')
 
 def parse(input_dir, output_dir):
-    for root, dirs, files in os.walk(input_dir):
+    for root, dirs, files in walk(input_dir):
         sm_files = [file for file in files if file.endswith('.sm')]
         ogg_files = [file for file in files if file.endswith('.ogg')]
 
@@ -105,15 +99,15 @@ def parse(input_dir, output_dir):
             new_file = format_file_name(sm_file)
             if new_file in format_ogg_dict:
                 try:
-                    sm_data = parse_sm(join(root, sm_file), new_file, output_dir)
+                    sm_data = get_data(join(root, sm_file))
+                    clean_data(sm_data)
+                    generate_timing(sm_data)
                     # write sm text data to output dir
                     output_file(new_file, sm_data, output_dir)
                     # move and rename .ogg file to output dir
                     copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
                 except Exception as ex:
                     print('Write failed for %s: %r' % (sm_file, ex))    
-
-#===================================================================================================
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -132,7 +126,7 @@ if __name__ == '__main__':
     else:
         if not isdir(output_dir):
             print("Output directory missing: " + args.output + " \nGenerated specified output folder.")
-            os.makedirs(output_dir)
+            makedirs(output_dir)
         parse(input_dir, output_dir)
 
     end_time = time.time()
