@@ -33,6 +33,7 @@ Writes processed data to their respective .txt files for successfully parsed .sm
  <summary>Changelog</summary>
  
  Sorted by most recent:
+ - refactored code to improve modularity
  - added parsing for multiple difficulties
  - added argparse functionality to specify directories, with leaner code implementations from cpuguy96
  - refactored code for readability with changes from cpuguy96 for file management
