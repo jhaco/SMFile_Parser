@@ -83,8 +83,6 @@ def parse_sm(sm_file, new_file, output_dir):
                     line_timing = calculate_timing(measure, measure_index, step_dict['BPM'], step_dict['offset'])
                     step_dict['notes'].extend(line_timing)
                     measure.clear()
-                    if line.startswith(';'):
-                        output_file(new_file, step_dict, output_dir)
                     measure_index += 1
                 elif line.startswith('#NOTES:'):
                     measure_index = 0                   
