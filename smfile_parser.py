@@ -1,7 +1,7 @@
 from collections import defaultdict
 from os import makedirs, walk
 from os.path import join, isdir, dirname, realpath
-from re import sub
+from re import sub, split
 from shutil import copyfile
 import argparse
 import time
@@ -11,14 +11,14 @@ def format_file_name(f):    #formats file name to ASCII
     formatted = sub('[^a-z0-9-_ ]', '', name)    #ignores special characters, except - and _
     return sub(' ', '_', formatted)  #replaces whitespace with _
 
-def output_file(file_name, x, output_dir):  #outputs results to file text
+def output_file(file_name, step_dict, output_dir):  #outputs results to file text
     ofile = file_name + '.txt'
 
     with open(join(output_dir, ofile), 'w') as f:
-        f.write('TITLE ' + x['title'] + '\n')
-        f.write('BPM   ' + str(x['bpm']) + '\n')
+        f.write('TITLE ' + step_dict['title'] + '\n')
+        f.write('BPM   ' + str(step_dict['bpm']) + '\n')
         f.write('NOTES\n')
-        for note in x['notes']:
+        for note in step_dict['notes']:
             f.write(note + '\n')
 
 #===================================================================================================
@@ -47,44 +47,44 @@ def parse_sm(sm_file, new_file, output_dir):
     measure         = []
     measure_index   = 0
 
-    flag            = False
+    read_notes      = False
 
     with open(sm_file, encoding='ascii', errors='ignore') as f:
         for line in f:
             line = line.rstrip('\n')
-            if not flag:
+            if not read_notes:
                 if line.startswith('#TITLE:'):
-                    step_dict['title']  = line.lstrip('#TILE').lstrip(':').rstrip(';')
+                    step_dict['title']  = line.lstrip('#TITLE').lstrip(':').rstrip(';')
                 elif line.startswith('#BPMS:'):
                     if ',' in line:  # raises Exception if multiple BPMS detected
                         raise ValueError('Multiple BPMs detected')
-                    step_dict['bpm']    = float(line.lstrip('#BPMS:.0').lstrip('=').rstrip(';'))
+                    step_dict['bpm']    = float(split('=', line)[-1].rstrip(';'))
                 elif line.startswith('#OFFSET:'):
-                    step_dict['offset'] = float(line.lstrip('#OFSET:').rstrip(';'))
+                    step_dict['offset'] = float(split(':', line)[-1].rstrip(';'))
                 elif line.startswith('#STOPS:') and line != "#STOPS:;":
                     raise ValueError('Stop detected')
                 elif line.startswith('#NOTES:'):
-                    flag     = True
+                    read_notes     = True
 
-            if flag:   #start of note processing
-                if line and not line.startswith((' ', ',', ';', '#')):
-                    line = convert_note(line)
-                    if line[0].isdigit():
-                        check = True if any((c in set('123456789')) for c in line) else False
-                        if check:
-                            measure.append(line)
-                        else:
-                            measure.append(None)
+            if read_notes:   #start of note processing
+                if line.startswith('#NOTES:'):
+                    measure_index = 0
+                    next(f)
+                    next(f)
+                    step_dict['notes'].append('DIFFICULTY ' + next(f).lstrip(' ').rstrip(':\n'))
                 elif line.startswith((',', ';')):
                     line_timing = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
                     step_dict['notes'].extend(line_timing)
                     measure.clear()
                     measure_index += 1
-                elif line.startswith('#NOTES:'):
-                    measure_index = 0
-                    next(f)
-                    next(f)
-                    step_dict['notes'].append('DIFFICULTY ' + next(f).lstrip(' ').rstrip(':\n'))
+                elif line and not line.startswith(' '):
+                    line = convert_note(line)
+                    if line[0].isdigit():
+                        note_placed = True if any((c in set('123456789')) for c in line) else False
+                        if note_placed:
+                            measure.append(line)
+                        else:
+                            measure.append(None)
                 
     return step_dict
 
