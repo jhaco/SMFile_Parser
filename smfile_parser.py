@@ -39,14 +39,14 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
     note_256        = measure_seconds/256   #length of each 1/256th note in the measure in seconds
     measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
     fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
-
+    # combines note and its timing, if the note exists
     note_and_timings = [measure[i] + ' ' + str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set != None]
     
     return note_and_timings
 
 def parse_sm(sm_file, new_file, output_dir):
     step_dict = defaultdict(list)
-    step_dict['notes'] = defaultdict(list)
+    step_dict['notes'] = defaultdict(list) # notes are paired with each difficulty
     current_difficulty = ''
     measure         = []
     measure_index   = 0
@@ -74,22 +74,22 @@ def parse_sm(sm_file, new_file, output_dir):
                     read_notes = True
 
             if read_notes:   #start of note processing
-                if line.startswith('#NOTES:'):
+                if line.startswith('#NOTES:'): # marks the beginning of each difficulty and its notes
                     measure_index = 0
                     next(f)
                     next(f)
-                    current_difficulty = next(f).lstrip(' ').rstrip(':\n')
-                elif line.startswith((',', ';')):
+                    current_difficulty = next(f).lstrip(' ').rstrip(':\n') # difficulty always found 3 lines down
+                elif line.startswith((',', ';')): # marks the end of each measure
                     notes_and_timings = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
                     step_dict['notes'][current_difficulty].extend(notes_and_timings)
                     measure.clear()
                     measure_index += 1
-                elif line and not line.startswith(' '):
+                elif line and not line.startswith(' '): # individual notes
                     line = convert_note(line)
                     if line[0].isdigit():
                         note_placed = True if any((c in set('123456789')) for c in line) else False
                         if note_placed:
-                            measure.append(line)
+                            measure.append(line) # adds note if found
                         else:
                             measure.append(None)
                 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         print("Invalid input directory argument.")
     else:
         if not isdir(output_dir):
-            print("Output directory missing: " + args.output + " \nGenerated specified output folder.")
+            print("Output directory missing: %s\nGenerated specified output folder." % args.output)
             makedirs(output_dir)
         parse(input_dir, output_dir)
 
