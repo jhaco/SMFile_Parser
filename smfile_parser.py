@@ -40,9 +40,9 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
     measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
     fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
 
-    line_timing = [measure[i] + ' ' + str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set != None]
+    note_and_timings = [measure[i] + ' ' + str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set != None]
     
-    return line_timing
+    return note_and_timings
 
 def parse_sm(sm_file, new_file, output_dir):
     step_dict = defaultdict(list)
@@ -57,17 +57,18 @@ def parse_sm(sm_file, new_file, output_dir):
         for line in f:
             line = line.rstrip('\n')
             if not read_notes:
-                if line.startswith('#TITLE:'):
-                    step_dict['title']  = line.lstrip('#TITLE').lstrip(':').rstrip(';')
-                elif line.startswith('#BPMS:'):
-                    if ',' in line:  # raises Exception if multiple BPMS detected
+                metadata = line.lstrip('#').rstrip(';').split(':') # splits key from data
+                if metadata[0] == 'TITLE':
+                    step_dict['title']  = ''.join(metadata[1:])
+                elif metadata[0] == 'BPMS':
+                    if ',' in metadata[1]:  # raises Exception if multiple BPMS detected
                         raise ValueError('Multiple BPMs detected')
-                    step_dict['bpm']    = float(split('=', line)[-1].rstrip(';'))
-                elif line.startswith('#OFFSET:'):
-                    step_dict['offset'] = float(split(':', line)[-1].rstrip(';'))
-                elif line.startswith('#STOPS:') and line != "#STOPS:;":
+                    step_dict['bpm']    = float(split('=', metadata[1])[-1])
+                elif metadata[0] == 'STOPS' and metadata[1]:
                     raise ValueError('Stop detected')
-                elif line.startswith('#NOTES:'):
+                elif metadata[0] == 'OFFSET':
+                    step_dict['offset'] = float(metadata[1])
+                elif metadata[0] == 'NOTES':
                     read_notes     = True
 
             if read_notes:   #start of note processing
@@ -77,8 +78,8 @@ def parse_sm(sm_file, new_file, output_dir):
                     next(f)
                     current_difficulty = next(f).lstrip(' ').rstrip(':\n')
                 elif line.startswith((',', ';')):
-                    line_timing = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
-                    step_dict['notes'][current_difficulty].extend(line_timing)
+                    notes_and_timings = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
+                    step_dict['notes'][current_difficulty].extend(notes_and_timings)
                     measure.clear()
                     measure_index += 1
                 elif line and not line.startswith(' '):
