@@ -15,16 +15,18 @@ def output_file(file_name, step_dict, output_dir):  #outputs results to file tex
     ofile = file_name + '.txt'
 
     with open(join(output_dir, ofile), 'w') as f:
-        f.write('TITLE ' + step_dict['title'] + '\n')
-        f.write('BPM   ' + str(step_dict['bpm']) + '\n')
+        f.write('TITLE %s\n' % step_dict['title'])
+        f.write('BPM   %s\n' % str(step_dict['bpm']))
         f.write('NOTES\n')
-        for note in step_dict['notes']:
-            f.write(note + '\n')
+        for difficulty in step_dict['notes'].keys():
+            f.write('DIFFICULTY %s\n' % difficulty)
+            for note in step_dict['notes'][difficulty]:
+                f.write(note + '\n')
 
 #===================================================================================================
 
 def convert_note(line):                                                      
-    return sub('4', '1', sub('[MKLF]', '0', line))    #removes extra notes: M, K, L, F; removes 4 note
+    return sub('4', '1', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
 
 #===================================================================================================
 
@@ -33,7 +35,7 @@ def convert_note(line):
 # 1/256    -> 256 * 1/256th notes           = 1 measure
 
 def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in seconds for each line
-    measure_seconds = 4 * 60/bpm    #length of measure in seconds   
+    measure_seconds = 4 * 60/bpm    #length of measure in seconds
     note_256        = measure_seconds/256   #length of each 1/256th note in the measure in seconds
     measure_timing  = measure_seconds * measure_index   #accumulated time from previous measures
     fraction_256    = 256/len(measure)  #number of 1/256th notes per beat: 1/2nd = 128, 1/4th = 64, etc
@@ -44,6 +46,8 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
 
 def parse_sm(sm_file, new_file, output_dir):
     step_dict = defaultdict(list)
+    step_dict['notes'] = defaultdict(list)
+    current_difficulty = ''
     measure         = []
     measure_index   = 0
 
@@ -71,10 +75,10 @@ def parse_sm(sm_file, new_file, output_dir):
                     measure_index = 0
                     next(f)
                     next(f)
-                    step_dict['notes'].append('DIFFICULTY ' + next(f).lstrip(' ').rstrip(':\n'))
+                    current_difficulty = next(f).lstrip(' ').rstrip(':\n')
                 elif line.startswith((',', ';')):
                     line_timing = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
-                    step_dict['notes'].extend(line_timing)
+                    step_dict['notes'][current_difficulty].extend(line_timing)
                     measure.clear()
                     measure_index += 1
                 elif line and not line.startswith(' '):
