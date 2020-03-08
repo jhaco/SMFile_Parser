@@ -57,19 +57,21 @@ def parse_sm(sm_file, new_file, output_dir):
         for line in f:
             line = line.rstrip('\n')
             if not read_notes:
-                metadata = line.lstrip('#').rstrip(';').split(':') # splits key from data
-                if metadata[0] == 'TITLE':
-                    step_dict['title']  = ''.join(metadata[1:])
-                elif metadata[0] == 'BPMS':
-                    if ',' in metadata[1]:  # raises Exception if multiple BPMS detected
+                metadata = line.lstrip('#').rstrip(';').split(':') # removes extra characters; splits name from values
+                data_name = metadata[0]
+                data_value = ':'.join(metadata[1:])
+                if data_name == 'TITLE':
+                    step_dict['title']  = data_value
+                elif data_name == 'BPMS':
+                    if ',' in data_value:  # raises Exception if multiple BPMS detected
                         raise ValueError('Multiple BPMs detected')
-                    step_dict['bpm']    = float(split('=', metadata[1])[-1])
-                elif metadata[0] == 'STOPS' and metadata[1]:
+                    step_dict['bpm']    = float(split('=', data_value)[-1]) # removes time to get bpm
+                elif data_name == 'STOPS' and data_value:
                     raise ValueError('Stop detected')
-                elif metadata[0] == 'OFFSET':
-                    step_dict['offset'] = float(metadata[1])
-                elif metadata[0] == 'NOTES':
-                    read_notes     = True
+                elif data_name == 'OFFSET':
+                    step_dict['offset'] = float(data_value)
+                elif data_name == 'NOTES':
+                    read_notes = True
 
             if read_notes:   #start of note processing
                 if line.startswith('#NOTES:'):
