@@ -85,11 +85,11 @@ def parse_sm(sm_file, new_file, output_dir):
                     measure.clear()
                     measure_index += 1
                 elif line and not line.startswith(' '): # individual notes
-                    line = convert_note(line)
-                    if line[0].isdigit():
-                        note_placed = True if any((c in set('123456789')) for c in line) else False
+                    note = convert_note(line)
+                    if note[0].isdigit():
+                        note_placed = True if any((c in set('123456789')) for c in note) else False
                         if note_placed:
-                            measure.append(line) # adds note if found
+                            measure.append(note) # adds note if found
                         else:
                             measure.append(None)
                 
