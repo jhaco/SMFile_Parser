@@ -44,7 +44,7 @@ def calculate_timing(measure, measure_index, bpm, offset):  #calculate time in s
     
     return note_and_timings
 
-def parse_sm(sm_file, new_file, output_dir):
+def parse_sm(sm_file):
     step_dict = defaultdict(list)
     step_dict['notes'] = defaultdict(list) # notes are paired with each difficulty
     current_difficulty = ''
@@ -54,24 +54,29 @@ def parse_sm(sm_file, new_file, output_dir):
     read_notes      = False
 
     with open(sm_file, encoding='ascii', errors='ignore') as f:
+        read_values = '' # contains combined data while not reading notes; structured '#type:data;'
         for line in f:
-            line = line.rstrip('\n')
+            line = line.rstrip() # removes trailing newline '\n' and possible trailing whitespace
             if not read_notes:
-                metadata = line.lstrip('#').rstrip(';').split(':') # removes extra characters; splits name from values
-                data_name = metadata[0]
-                data_value = ':'.join(metadata[1:])
-                if data_name == 'TITLE':
-                    step_dict['title']  = data_value
-                elif data_name == 'BPMS':
-                    if ',' in data_value:  # raises Exception if multiple BPMS detected
-                        raise ValueError('Multiple BPMs detected')
-                    step_dict['bpm']    = float(split('=', data_value)[-1]) # removes time to get bpm
-                elif data_name == 'STOPS' and data_value:
-                    raise ValueError('Stop detected')
-                elif data_name == 'OFFSET':
-                    step_dict['offset'] = float(data_value)
-                elif data_name == 'NOTES':
+                if line.startswith('#NOTES:'):
                     read_notes = True
+                else:
+                    read_values += line
+                    if read_values.endswith(';'): # begin processing read_values for data
+                        metadata = read_values.lstrip('#').rstrip(';').split(':') # removes extra characters; splits name from values
+                        data_name = metadata[0]
+                        data_value = ':'.join(metadata[1:])
+                        if data_name == 'TITLE':
+                            step_dict['title']  = data_value
+                        elif data_name == 'BPMS':
+                            if ',' in data_value:  # raises Exception if multiple BPMS detected
+                                raise ValueError('Multiple BPMs detected')
+                            step_dict['bpm']    = float(split('=', data_value)[-1]) # removes time to get bpm
+                        elif data_name == 'STOPS' and data_value:
+                            raise ValueError('Stop detected')
+                        elif data_name == 'OFFSET':
+                            step_dict['offset'] = float(data_value)
+                        read_values = ''
 
             if read_notes:   #start of note processing
                 if line.startswith('#NOTES:'): # marks the beginning of each difficulty and its notes
@@ -108,7 +113,7 @@ def parse(input_dir, output_dir):
             new_file = format_file_name(sm_file)
             if new_file in format_ogg_dict:
                 try:
-                    sm_data = parse_sm(join(root, sm_file), new_file, output_dir)
+                    sm_data = parse_sm(join(root, sm_file))
                     # write sm text data to output dir
                     output_file(new_file, sm_data, output_dir)
                     # move and rename .ogg file to output dir
