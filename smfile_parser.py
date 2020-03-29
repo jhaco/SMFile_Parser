@@ -13,15 +13,18 @@ def format_file_name(f):    #formats file name to ASCII
 
 def output_file(file_name, step_dict, output_dir):  #outputs results to file text
     ofile = file_name + '.txt'
-
+    
+    # pre-generate output data
+    title = 'TITLE %s\n' % step_dict['title']
+    bpm   = 'BPM   %s\n' % str(step_dict['bpm'])
+    note_data = 'NOTES\n'
+    for difficulty in step_dict['notes'].keys():
+        note_data += 'DIFFICULTY %s\n' % difficulty
+        for note in step_dict['notes'][difficulty]:
+            note_data += note + '\n'
+    
     with open(join(output_dir, ofile), 'w') as f:
-        f.write('TITLE %s\n' % step_dict['title'])
-        f.write('BPM   %s\n' % str(step_dict['bpm']))
-        f.write('NOTES\n')
-        for difficulty in step_dict['notes'].keys():
-            f.write('DIFFICULTY %s\n' % difficulty)
-            for note in step_dict['notes'][difficulty]:
-                f.write(note + '\n')
+        f.write(''.join((title, bpm, note_data)))
 
 #===================================================================================================
 
