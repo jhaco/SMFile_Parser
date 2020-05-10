@@ -1,6 +1,8 @@
 ## SMFile_Parser
 ###### Stepmania File Parser for the [Stepmania Note Generator](https://github.com/cpuguy96/stepmania-note-generator) by cpuguy96 for [Stepmania](https://github.com/stepmania/stepmania/wiki/sm) by VR0. Used with [Stepmania File Writer](https://github.com/jhaco/SMTXT_Converter). Currently supports files with static BPM to reduce complexity in training the note generator program. Now supports multiple difficulties!
 
+# NOTICE: Project moved to [Stepmania Data Tools](https://github.com/jhaco/SMDataTools)
+
 Parses all .sm files in the `parseIn` folder by default for the following information:
 - Title
 - Beats-per-Minute (BPM)
